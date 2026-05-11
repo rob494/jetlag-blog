@@ -76,14 +76,14 @@ export default async function BlogPost(props: { params: Promise<{ slug: string }
           {/* Article Body */}
           <div 
             className="prose prose-lg max-w-none mb-16
-              prose-headings:font-bold prose-headings:text-gray-900
+              prose-headings:font-bold prose-headings:text-black
               prose-h2:text-3xl prose-h2:mt-12 prose-h2:mb-6
               prose-h3:text-2xl prose-h3:mt-8 prose-h3:mb-4
-              prose-p:text-gray-900 prose-p:leading-relaxed prose-p:mb-6 prose-p:text-lg
+              prose-p:text-black prose-p:leading-relaxed prose-p:mb-6 prose-p:text-lg
               prose-a:text-blue-600 prose-a:no-underline prose-a:font-semibold hover:prose-a:underline
-              prose-strong:text-gray-900 prose-strong:font-bold
-              prose-ul:my-6 prose-li:my-2 prose-li:text-gray-900
-              prose-blockquote:border-l-4 prose-blockquote:border-blue-600 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-gray-800"
+              prose-strong:text-black prose-strong:font-bold
+              prose-ul:my-6 prose-li:my-2 prose-li:text-black
+              prose-blockquote:border-l-4 prose-blockquote:border-blue-600 prose-blockquote:pl-6 prose-blockquote:italic prose-blockquote:text-black"
             dangerouslySetInnerHTML={{ __html: content }}
           />
 
