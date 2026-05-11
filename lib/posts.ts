@@ -45,7 +45,8 @@ export function getAllPosts(): PostData[] {
         slug,
         ...(data as Omit<PostData, 'slug'>),
       };
-    });
+    })
+    .filter((post) => post.slug && post.title && post.author && post.date);
 
   return allPostsData.sort((a, b) => (a.date < b.date ? 1 : -1));
 }

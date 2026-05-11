@@ -2,8 +2,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getAllPosts, getPostBySlug, getPostContent, getAuthor, calculateReadingTime } from '@/lib/posts';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateStaticParams() {
-  const posts = getAllPosts();
+  const posts = getAllPosts().filter(p => p && p.slug);
   return posts.map((post) => ({
     slug: post.slug,
   }));
@@ -16,7 +18,11 @@ export default async function BlogPost({ params }: { params: { slug: string } })
   const readingTime = calculateReadingTime(post.content || '');
 
   const relatedPosts = getAllPosts()
-    .filter((p) => p && p.slug && p.author && p.tags && p.slug !== post.slug && p.tags.some((tag) => post.tags?.includes(tag)))
+    .filter((p) => {
+      if (!p || !p.slug || !p.author || !Array.isArray(p.tags) || !Array.isArray(post.tags)) return false;
+      if (p.slug === post.slug) return false;
+      return p.tags.some((tag) => post.tags.includes(tag));
+    })
     .slice(0, 3);
 
   return (
