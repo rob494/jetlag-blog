@@ -9,25 +9,12 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-  let post, content, author, readingTime;
-  
-  try {
-    post = getPostBySlug(params.slug);
-    content = await getPostContent(params.slug);
-    author = getAuthor(post.author);
-    readingTime = calculateReadingTime(post.content || '');
-  } catch (error) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
-          <p className="text-gray-600 mb-8">The blog post you're looking for doesn't exist.</p>
-          <Link href="/blog" className="text-blue-600 hover:underline">Back to Blog</Link>
-        </div>
-      </div>
-    );
-  }
+export default async function BlogPost(props: { params: Promise<{ slug: string }> }) {
+  const params = await props.params;
+  const post = getPostBySlug(params.slug);
+  const content = await getPostContent(params.slug);
+  const author = getAuthor(post.author);
+  const readingTime = calculateReadingTime(post.content || '');
 
   const relatedPosts = getAllPosts()
     .filter((p) => {
