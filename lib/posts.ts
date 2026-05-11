@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import { remark } from 'remark';
-import html from 'remark-html';
+import remarkHtml from 'remark-html';
 
 const postsDirectory = path.join(process.cwd(), 'content/posts');
 const authorsDirectory = path.join(process.cwd(), 'content/authors');
@@ -75,7 +75,7 @@ export function getPostBySlug(slug: string): PostData {
 
 export async function getPostContent(slug: string): Promise<string> {
   const post = getPostBySlug(slug);
-  const processedContent = await remark().use(html).process(post.content || '');
+  const processedContent = await remark().use(remarkHtml).process(post.content || '');
   return processedContent.toString();
 }
 
