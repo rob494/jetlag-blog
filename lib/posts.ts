@@ -58,6 +58,11 @@ export function getFeaturedPosts(): PostData[] {
 
 export function getPostBySlug(slug: string): PostData {
   const fullPath = path.join(postsDirectory, `${slug}.md`);
+  
+  if (!fs.existsSync(fullPath)) {
+    throw new Error(`Post not found: ${slug}`);
+  }
+  
   const fileContents = fs.readFileSync(fullPath, 'utf8');
   const { data, content } = matter(fileContents);
 

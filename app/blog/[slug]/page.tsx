@@ -2,8 +2,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { getAllPosts, getPostBySlug, getPostContent, getAuthor, calculateReadingTime } from '@/lib/posts';
 
-export const dynamic = 'force-dynamic';
-
 export async function generateStaticParams() {
   const posts = getAllPosts().filter(p => p && p.slug);
   return posts.map((post) => ({
@@ -12,10 +10,24 @@ export async function generateStaticParams() {
 }
 
 export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const post = getPostBySlug(params.slug);
-  const content = await getPostContent(params.slug);
-  const author = getAuthor(post.author);
-  const readingTime = calculateReadingTime(post.content || '');
+  let post, content, author, readingTime;
+  
+  try {
+    post = getPostBySlug(params.slug);
+    content = await getPostContent(params.slug);
+    author = getAuthor(post.author);
+    readingTime = calculateReadingTime(post.content || '');
+  } catch (error) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold mb-4">Post Not Found</h1>
+          <p className="text-gray-600 mb-8">The blog post you're looking for doesn't exist.</p>
+          <Link href="/blog" className="text-blue-600 hover:underline">Back to Blog</Link>
+        </div>
+      </div>
+    );
+  }
 
   const relatedPosts = getAllPosts()
     .filter((p) => {
