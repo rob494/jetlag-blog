@@ -1,65 +1,164 @@
-import Image from "next/image";
+import Link from 'next/link';
+import Image from 'next/image';
+import { getAllPosts, getFeaturedPosts, getAuthor } from '@/lib/posts';
 
 export default function Home() {
+  const featuredPosts = getFeaturedPosts().filter(post => post.author);
+  const recentPosts = getAllPosts().filter(post => post.author).slice(0, 9);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="relative h-[600px] bg-gradient-to-r from-blue-600 to-teal-500 text-white">
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative container mx-auto px-4 h-full flex flex-col justify-center items-center text-center">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+            Travel Smarter, Feel Better
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-xl md:text-2xl mb-8 max-w-2xl">
+            Expert advice on beating jet lag, staying healthy on the road, and making the most of your adventures.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/blog"
+            className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            Explore All Posts
+          </Link>
+        </div>
+      </section>
+
+      {/* Featured Posts */}
+      <section className="container mx-auto px-4 py-16">
+        <h2 className="text-3xl font-bold mb-8">Featured Articles</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          {featuredPosts.map((post) => {
+            const author = getAuthor(post.author);
+            return (
+              <Link href={`/blog/${post.slug}`} key={post.slug}>
+                <article className="group cursor-pointer">
+                  <div className="relative h-64 mb-4 overflow-hidden rounded-lg">
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      className="object-cover group-hover:scale-105 transition duration-300"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <span className="text-sm text-blue-600 font-medium">Featured</span>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-sm text-gray-500">{new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2 group-hover:text-blue-600 transition">
+                    {post.title}
+                  </h3>
+                  <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                  <div className="flex items-center gap-3">
+                    <Image
+                      src={author.image}
+                      alt={author.name}
+                      width={32}
+                      height={32}
+                      className="rounded-full"
+                    />
+                    <span className="text-sm text-gray-700">{author.name}</span>
+                  </div>
+                </article>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* Recent Posts Grid */}
+      <section className="bg-gray-50 py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold mb-8">Recent Posts</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {recentPosts.map((post) => {
+              const author = getAuthor(post.author);
+              return (
+                <Link href={`/blog/${post.slug}`} key={post.slug}>
+                  <article className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition group">
+                    <div className="relative h-48">
+                      <Image
+                        src={post.image}
+                        alt={post.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition duration-300"
+                      />
+                    </div>
+                    <div className="p-6">
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {post.tags.slice(0, 2).map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-xs bg-gray-100 text-gray-700 px-3 py-1 rounded-full"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <h3 className="text-xl font-bold mb-2 group-hover:text-blue-600 transition">
+                        {post.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                        {post.excerpt}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <Image
+                            src={author.image}
+                            alt={author.name}
+                            width={28}
+                            height={28}
+                            className="rounded-full"
+                          />
+                          <span className="text-sm text-gray-700">{author.name}</span>
+                        </div>
+                        <span className="text-sm text-gray-500">
+                          {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+                </Link>
+              );
+            })}
+          </div>
+          <div className="text-center mt-12">
+            <Link
+              href="/blog"
+              className="inline-block bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition"
+            >
+              View All Posts
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section className="py-16">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-3xl font-bold mb-4">Join Our Community</h2>
+          <p className="text-gray-600 mb-8 max-w-2xl mx-auto">
+            Get weekly travel tips, jet lag hacks, and destination guides delivered to your inbox.
+          </p>
+          <form className="max-w-md mx-auto flex gap-4">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              className="flex-1 px-4 py-3 border border-gray-300 rounded-full focus:outline-none focus:border-blue-600"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-blue-700 transition"
+            >
+              Subscribe
+            </button>
+          </form>
         </div>
-      </main>
+      </section>
     </div>
   );
 }
