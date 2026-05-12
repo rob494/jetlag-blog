@@ -53,7 +53,7 @@ export default async function BlogPost(props: { params: Promise<{ slug: string }
                 </span>
               ))}
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">{post.title}</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-6 text-black">{post.title}</h1>
             <div className="flex items-center gap-4 mb-6">
               <Image
                 src={author.image}
